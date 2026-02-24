@@ -3,12 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>أذكار الصباح والمساء</title>
+    <title>أذكار وأدعية</title>
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700&display=swap" rel="stylesheet">
-    <script>
-        window.va = window.va || function () { (window.vaq = window.vaq || []).push(arguments); };
-    </script>
-    <script defer src="/_vercel/insights/script.js"></script>
     <style>
         *{margin:0;padding:0;box-sizing:border-box}
         body{font-family:'Cairo',sans-serif;background:linear-gradient(135deg,#1a365d,#2c5282);min-height:100vh;padding:20px;color:#fff}
@@ -17,7 +13,7 @@
         h1{font-size:2rem;margin-bottom:10px;color:#c9a227}
         .date{font-size:1rem;opacity:0.9}
         .tabs{display:flex;gap:10px;margin-bottom:20px;background:rgba(255,255,255,0.1);padding:5px;border-radius:15px}
-        .tab{flex:1;padding:12px;border:none;background:transparent;color:#fff;font-family:'Cairo',sans-serif;font-size:1rem;cursor:pointer;border-radius:10px;transition:all 0.3s}
+        .tab{flex:1;padding:12px;border:none;background:transparent;color:#fff;font-family:'Cairo',sans-serif;font-size:0.9rem;cursor:pointer;border-radius:10px;transition:all 0.3s}
         .tab.active{background:#c9a227;color:#1a365d;font-weight:700}
         .content{display:none}
         .content.active{display:block}
@@ -37,20 +33,22 @@
         .donation-box h3{color:#c9a227;margin-bottom:10px;font-size:1.2rem}
         .donation-box p{font-size:1rem;line-height:1.6;opacity:0.95}
         .footer-logo{text-align:center;margin-top:30px;padding-top:20px;border-top:1px solid rgba(255,255,255,0.2)}
-        .footer-logo p{font-size:1.5rem;color:#c9a227;letter-spacing:3px;font-weight:700;font-family:monospace}
-        @media(max-width:600px){h1{font-size:1.5rem}.zekr-text{font-size:1rem}}
+        .footer-logo p{font-size:1.2rem;color:#c9a227;letter-spacing:2px;font-weight:700;font-family:monospace}
+        @media(max-width:600px){h1{font-size:1.5rem}.zekr-text{font-size:1rem}.tab{font-size:0.8rem;padding:10px 5px}}
     </style>
 </head>
 <body>
     <div class="container">
         <header>
-            <h1>📿 أذكار الصباح والمساء</h1>
+            <h1>📿 أذكار وأدعية</h1>
             <div class="date" id="currentDate"></div>
         </header>
         <div class="tabs">
             <button class="tab active" onclick="switchTab('morning')">☀️ الصباح</button>
             <button class="tab" onclick="switchTab('evening')">🌙 المساء</button>
+            <button class="tab" onclick="switchTab('dua')">🤲 الأدعية</button>
         </div>
+        
         <div id="morning" class="content active">
             <div class="progress">
                 <div>التقدم: <span id="morningProgress">0</span>%</div>
@@ -59,6 +57,7 @@
             <div id="morningAzkar"></div>
             <button class="reset-btn" onclick="resetAll('morning')">🔄 إعادة ضبط العد</button>
         </div>
+        
         <div id="evening" class="content">
             <div class="progress">
                 <div>التقدم: <span id="eveningProgress">0</span>%</div>
@@ -68,13 +67,25 @@
             <button class="reset-btn" onclick="resetAll('evening')">🔄 إعادة ضبط العد</button>
         </div>
         
+        <div id="dua" class="content">
+            <div class="progress">
+                <div>التقدم: <span id="duaProgress">0</span>%</div>
+                <div class="progress-bar"><div class="progress-fill" id="duaBar" style="width:0%"></div></div>
+            </div>
+            <div id="duaAzkar"></div>
+            <button class="reset-btn" onclick="resetAll('dua')">🔄 إعادة ضبط العد</button>
+        </div>
+        
         <div class="donation-box">
             <h3>🤲 صدقة جارية</h3>
             <p>اللهم اتنا في الدنيا حسنة وفي الأخرة حسنة وقنا عذاب النار<br>
-              </div> 
+            جعلها الله صدقة جارية لصاحبها ولمن ساهم في نشرها</p>
+        </div> 
+        
         <div class="footer-logo">
-             <p>رمضان مبارك</p>
-            <p>كل عام وانتم بخير</p>    </div> 
+            <p>صنع بحب ❤️</p>
+            <p style="font-size:0.9rem;margin-top:5px;">| A.M.G |</p>
+        </div> 
     </div>
     
     <script>
@@ -103,29 +114,76 @@
             {text:"أَسْتَغْفِرُ اللَّهَ وَأَتُوبُ إِلَيْهِ",count:100,current:0}
         ];
         
+        const duaAzkar=[
+            {text:"رَبَّنَا آتِنَا فِي الدُّنْيَا حَسَنَةً وَفِي الْآخِرَةِ حَسَنَةً وَقِنَا عَذَابَ النَّارِ",count:1,current:0,source:"البقرة: 201"},
+            {text:"رَبِّ اشْرَحْ لِي صَدْرِي وَيَسِّرْ لِي أَمْرِي وَاحْلُلْ عُقْدَةً مِّن لِّسَانِي يَفْقَهُوا قَوْلِي",count:1,current:0,source:"طه: 25-28"},
+            {text:"لَا إِلَهَ إِلَّا أَنْتَ سُبْحَانَكَ إِنِّي كُنْتُ مِنَ الظَّالِمِينَ",count:1,current:0,source:"الأنبياء: 87"},
+            {text:"حَسْبُنَا اللَّهُ وَنِعْمَ الْوَكِيلُ",count:1,current:0,source:"آل عمران: 173"},
+            {text:"اللَّهُمَّ إِنِّي أَسْأَلُكَ الْهُدَى وَالتُّقَى وَالْعَفَافَ وَالْغِنَى",count:1,current:0,source:"حديث مسلم"},
+            {text:"اللَّهُمَّ إِنِّي أَعُوذُ بِكَ مِنَ الْهَمِّ وَالْحَزَنِ، وَأَعُوذُ بِكَ مِنَ الْعَجْزِ وَالْكَسَلِ، وَأَعُوذُ بِكَ مِنَ الْجُبْنِ وَالْبُخْلِ، وَأَعُوذُ بِكَ مِنْ غَلَبَةِ الدَّيْنِ، وَقَهْرِ الرِّجَالِ",count:1,current:0,source:"حديث البخاري"},
+            {text:"اللَّهُمَّ اغْفِرْ لِي وَلِوَالِدَيَّ وَلِمَنْ دَخَلَ بَيْتِيَ مُؤْمِنًا وَلِلْمُؤْمِنِينَ وَالْمُؤْمِنَاتِ",count:1,current:0,source:"حديث مسلم"},
+            {text:"اللَّهُمَّ إِنِّي أَسْأَلُكَ الْجَنَّةَ وَأَعُوذُ بِكَ مِنَ النَّارِ",count:3,current:0,source:"حديث أبو داود"},
+            {text:"اللَّهُمَّ أَحْسِنْ عَاقِبَتَنَا فِي الْأُمُورِ كُلِّهَا، وَأَجِرْنَا مِنْ خِزْيِ الدُّنْيَا وَعَذَابِ الْآخِرَةِ",count:1,current:0,source:"حديث الترمذي"},
+            {text:"رَبِّ أَوْزِعْنِي أَنْ أَشْكُرَ نِعْمَتَكَ الَّتِي أَنْعَمْتَ عَلَيَّ وَعَلَىٰ وَالِدَيَّ وَأَنْ أَعْمَلَ صَالِحًا تَرْضَاهُ وَأَدْخِلْنِي بِرَحْمَتِكَ فِي عِبَادِكَ الصَّالِحِينَ",count:1,current:0,source:"النمل: 19"},
+            {text:"اللَّهُمَّ إِنِّي أَسْأَلُكَ عِلْمًا نَافِعًا، وَرِزْقًا طَيِّبًا، وَعَمَلًا مُتَقَبَّلًا",count:1,current:0,source:"حديث ابن ماجه"},
+            {text:"يَا حَيُّ يَا قَيُّومُ، بِرَحْمَتِكَ أَسْتَغِيثُ، أَصْلِحْ لِي شَأْنِي كُلَّهُ، وَلَا تَكِلْنِي إِلَى نَفْسِي طَرْفَةَ عَيْنٍ",count:1,current:0,source:"حديث الحاكم"}
+        ];
+        
         function loadData(){
             const savedMorning=localStorage.getItem('morningAzkar');
             const savedEvening=localStorage.getItem('eveningAzkar');
+            const savedDua=localStorage.getItem('duaAzkar');
             if(savedMorning){const parsed=JSON.parse(savedMorning);morningAzkar.forEach((z,i)=>{if(parsed[i])z.current=parsed[i].current})}
             if(savedEvening){const parsed=JSON.parse(savedEvening);eveningAzkar.forEach((z,i)=>{if(parsed[i])z.current=parsed[i].current})}
+            if(savedDua){const parsed=JSON.parse(savedDua);duaAzkar.forEach((z,i)=>{if(parsed[i])z.current=parsed[i].current})}
         }
         
-        function saveData(){localStorage.setItem('morningAzkar',JSON.stringify(morningAzkar));localStorage.setItem('eveningAzkar',JSON.stringify(eveningAzkar))}
+        function saveData(){
+            localStorage.setItem('morningAzkar',JSON.stringify(morningAzkar));
+            localStorage.setItem('eveningAzkar',JSON.stringify(eveningAzkar));
+            localStorage.setItem('duaAzkar',JSON.stringify(duaAzkar));
+        }
         
         function renderAzkar(type){
             const container=document.getElementById(type+'Azkar');
-            const azkar=type==='morning'?morningAzkar:eveningAzkar;
-            container.innerHTML=azkar.map((z,i)=>`<div class="zekr-card ${z.current>=z.count?'completed':''}" onclick="increment('${type}',${i})"><div class="zekr-text">${z.text}</div><div class="zekr-info"><span>اضغط للعد</span><span class="count ${z.current>=z.count?'completed':''}">${z.current}/${z.count}</span></div></div>`).join('');
+            let azkar;
+            if(type==='morning') azkar=morningAzkar;
+            else if(type==='evening') azkar=eveningAzkar;
+            else azkar=duaAzkar;
+            
+            container.innerHTML=azkar.map((z,i)=>{
+                const sourceTag = z.source ? `<div style="font-size:0.8rem;color:#666;margin-top:5px;font-style:italic;">📖 ${z.source}</div>` : '';
+                return `<div class="zekr-card ${z.current>=z.count?'completed':''}" onclick="increment('${type}',${i})">
+                    <div class="zekr-text">${z.text}</div>
+                    ${sourceTag}
+                    <div class="zekr-info">
+                        <span>اضغط للعد</span>
+                        <span class="count ${z.current>=z.count?'completed':''}">${z.current}/${z.count}</span>
+                    </div>
+                </div>`
+            }).join('');
             updateProgress(type);
         }
         
         function increment(type,index){
-            const azkar=type==='morning'?morningAzkar:eveningAzkar;
-            if(azkar[index].current<azkar[index].count){azkar[index].current++;saveData();renderAzkar(type)}
+            let azkar;
+            if(type==='morning') azkar=morningAzkar;
+            else if(type==='evening') azkar=eveningAzkar;
+            else azkar=duaAzkar;
+            
+            if(azkar[index].current<azkar[index].count){
+                azkar[index].current++;
+                saveData();
+                renderAzkar(type);
+            }
         }
         
         function updateProgress(type){
-            const azkar=type==='morning'?morningAzkar:eveningAzkar;
+            let azkar;
+            if(type==='morning') azkar=morningAzkar;
+            else if(type==='evening') azkar=eveningAzkar;
+            else azkar=duaAzkar;
+            
             const total=azkar.reduce((s,z)=>s+z.count,0);
             const current=azkar.reduce((s,z)=>s+z.current,0);
             const p=Math.round((current/total)*100);
@@ -140,15 +198,29 @@
             document.getElementById(type).classList.add('active');
         }
         
-        function resetAll(type){if(confirm('هل تريد إعادة ضبط العداد؟')){const azkar=type==='morning'?morningAzkar:eveningAzkar;azkar.forEach(z=>z.current=0);saveData();renderAzkar(type)}}
+        function resetAll(type){
+            if(confirm('هل تريد إعادة ضبط العداد؟')){
+                let azkar;
+                if(type==='morning') azkar=morningAzkar;
+                else if(type==='evening') azkar=eveningAzkar;
+                else azkar=duaAzkar;
+                
+                azkar.forEach(z=>z.current=0);
+                saveData();
+                renderAzkar(type);
+            }
+        }
         
-        function setDate(){const options={weekday:'long',year:'numeric',month:'long',day:'numeric'};document.getElementById('currentDate').textContent=new Date().toLocaleDateString('ar-SA',options)}
+        function setDate(){
+            const options={weekday:'long',year:'numeric',month:'long',day:'numeric'};
+            document.getElementById('currentDate').textContent=new Date().toLocaleDateString('ar-SA',options);
+        }
         
-        loadData();setDate();renderAzkar('morning');renderAzkar('evening');
+        loadData();
+        setDate();
+        renderAzkar('morning');
+        renderAzkar('evening');
+        renderAzkar('dua');
     </script>
-    <script>
-        window.si = window.si || function () { (window.siq = window.siq || []).push(arguments); };
-    </script>
-    <script defer src="/_vercel/speed-insights/script.js"></script>
 </body>
 </html>
