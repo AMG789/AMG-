@@ -12,6 +12,39 @@
         header{text-align:center;padding:30px 0}
         h1{font-size:2rem;margin-bottom:10px;color:#c9a227}
         .date{font-size:1rem;opacity:0.9}
+        
+        /* إشعار التنبيه */
+        .notification{
+            position:fixed;
+            top:20px;
+            left:50%;
+            transform:translateX(-50%) translateY(-150%);
+            background:linear-gradient(135deg,#c9a227,#d4af37);
+            color:#1a365d;
+            padding:20px 30px;
+            border-radius:15px;
+            box-shadow:0 10px 30px rgba(0,0,0,0.3);
+            z-index:1000;
+            font-weight:700;
+            font-size:1.1rem;
+            text-align:center;
+            min-width:300px;
+            transition:transform 0.5s ease;
+            border:3px solid #fff;
+        }
+        .notification.show{transform:translateX(-50%) translateY(0)}
+        .notification .close{
+            position:absolute;
+            top:5px;
+            left:10px;
+            background:none;
+            border:none;
+            font-size:1.5rem;
+            cursor:pointer;
+            color:#1a365d;
+        }
+        .notification-icon{font-size:2rem;margin-bottom:5px}
+        
         .tabs{display:flex;gap:10px;margin-bottom:20px;background:rgba(255,255,255,0.1);padding:5px;border-radius:15px}
         .tab{flex:1;padding:12px;border:none;background:transparent;color:#fff;font-family:'Cairo',sans-serif;font-size:0.9rem;cursor:pointer;border-radius:10px;transition:all 0.3s}
         .tab.active{background:#c9a227;color:#1a365d;font-weight:700}
@@ -38,6 +71,13 @@
     </style>
 </head>
 <body>
+    <!-- إشعار التنبيه -->
+    <div id="notification" class="notification">
+        <button class="close" onclick="hideNotification()">×</button>
+        <div class="notification-icon" id="notifIcon">☀️</div>
+        <div id="notifText">تنبيه</div>
+    </div>
+
     <div class="container">
         <header>
             <h1>📿 أذكار وأدعية</h1>
@@ -84,11 +124,12 @@
         
         <div class="footer-logo">
             <p>🌿</p>
-            <p style="font-size:0.9rem;margin-top:5px;">| A.M.G |</p>
+            <p style="font-size:0.9rem;margin-top:5px;"> A.M.G </p>
         </div> 
     </div>
     
     <script>
+        // بيانات الأذكار
         const morningAzkar=[
             {text:"أَصْبَحْنَا وَأَصْبَحَ الْمُلْكُ لِلَّهِ، وَالْحَمْدُ لِلَّهِ، لَا إِلَهَ إِلَّا اللَّهُ وَحْدَهُ لَا شَرِيكَ لَهُ، لَهُ الْمُلْكُ وَلَهُ الْحَمْدُ، وَهُوَ عَلَى كُلِّ شَيْءٍ قَدِيرٌ",count:1,current:0},
             {text:"اللَّهُمَّ بِكَ أَصْبَحْنَا، وَبِكَ أَمْسَيْنَا، وَبِكَ نَحْيَا، وَبِكَ نَمُوتُ، وَإِلَيْكَ النُّشُورُ",count:1,current:0},
@@ -129,6 +170,44 @@
             {text:"يَا حَيُّ يَا قَيُّومُ، بِرَحْمَتِكَ أَسْتَغِيثُ، أَصْلِحْ لِي شَأْنِي كُلَّهُ، وَلَا تَكِلْنِي إِلَى نَفْسِي طَرْفَةَ عَيْنٍ",count:1,current:0,source:"حديث الحاكم"}
         ];
         
+        // نظام الإشعارات
+        function checkTimeAndNotify(){
+            const now = new Date();
+            const hour = now.getHours();
+            const notification = document.getElementById('notification');
+            const notifIcon = document.getElementById('notifIcon');
+            const notifText = document.getElementById('notifText');
+            
+            // قبل 8 الصبح (من 4 الصبح لـ 8 الصبح)
+            if(hour >= 4 && hour < 8){
+                notifIcon.textContent = '☀️';
+                notifText.textContent = 'لا تنسَ أذكار الصباح';
+                showNotification();
+            }
+            // قبل 6 المساء (من 4 العصر لـ 6 المساء)
+            else if(hour >= 16 && hour < 18){
+                notifIcon.textContent = '🌙';
+                notifText.textContent = 'لا تنسَ أذكار المساء';
+                showNotification();
+            }
+        }
+        
+        function showNotification(){
+            const notification = document.getElementById('notification');
+            notification.classList.add('show');
+            
+            // إخفاء تلقائي بعد 5 ثواني
+            setTimeout(() => {
+                hideNotification();
+            }, 5000);
+        }
+        
+        function hideNotification(){
+            const notification = document.getElementById('notification');
+            notification.classList.remove('show');
+        }
+        
+        // باقي الدوال
         function loadData(){
             const savedMorning=localStorage.getItem('morningAzkar');
             const savedEvening=localStorage.getItem('eveningAzkar');
@@ -216,11 +295,16 @@
             document.getElementById('currentDate').textContent=new Date().toLocaleDateString('ar-SA',options);
         }
         
+        // تشغيل كل شيء
         loadData();
         setDate();
         renderAzkar('morning');
         renderAzkar('evening');
         renderAzkar('dua');
+        
+        // فحص الوقت بعد ثانية من التحميل
+        setTimeout(checkTimeAndNotify, 1000);
     </script>
 </body>
 </html>
+
